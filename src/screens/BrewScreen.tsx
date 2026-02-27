@@ -1,18 +1,15 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { calculateCoffee } from '../lib/brewEngine';
 
-import { calculateCoffee, calculateRatio, calculateWater } from '../lib/brewEngine';
+type Field = 'liters' | 'ratio';
 
-type Field = 'liters' | 'ratio' | 'grams';
-
-// Updated: Warmer "Coffee Shop" color palette
 const COLORS = {
-  bg: '#FDFBF7',          // Warm cream background
-  text: '#2D2926',        // Soft charcoal text (softer than pure black)
-  muted: 'rgba(45, 41, 38, 0.55)',
-  card: '#FFFFFF',
-  accent: '#D68C45',      // Warm coffee-inspired accent
-  border: 'rgba(45, 41, 38, 0.12)',
+  bg: '#FFFFFF',
+  text: '#111111',
+  muted: '#888888',
+  accent: '#2563EB',
+  border: '#E5E5E5',
 };
 
 function sanitizeNumericText(input: string): string {
@@ -30,175 +27,73 @@ function sanitizeNumericText(input: string): string {
   return out;
 }
 
-function toNumberOrNaN(text: string): number {
-  if (!text.trim()) return NaN;
-  const n = Number(text);
-  return Number.isFinite(n) ? n : NaN;
-}
-
-function formatNumberForInput(n: number, maxDecimals: number): string {
-  if (!Number.isFinite(n) || n <= 0) return '';
-  const fixed = n.toFixed(maxDecimals);
-  return fixed.replace(/\.0+$|(\.\d*[1-9])0+$/, '$1');
-}
-
 export default function BrewScreen() {
-  const [litersText, setLitersText] = useState<string>('1.5');
-  const [ratioText, setRatioText] = useState<string>('16');
+  const [liters, setLiters] = useState<string>('1.5');
+  const [ratio, setRatio] = useState<string>('16');
+  const [activeField, setActiveField] = useState<Field | null>(null);
+  
+  // Ref to programmatically focus the Ratio input
+  const ratioInputRef = useRef<TextInput>(null);
 
-  const initialGrams = useMemo(() => {
-    const l = 1.5;
-    const r = 16;
-    return formatNumberForInput(calculateCoffee(l, r), 1);
-  }, []);
-  const [gramsText, setGramsText] = useState<string>(initialGrams);
+  const coffeeGrams = useMemo(() => {
+    // Return empty state if values are missing
+    if (!liters || !ratio) return '—';
+    const l = parseFloat(liters) || 0;
+    const r = parseFloat(ratio) || 0;
+    const result = calculateCoffee(l, r);
+    return isFinite(result) && result > 0 ? Math.round(result).toString() : '—';
+  }, [liters, ratio]);
 
-  const lastTwoRef = useRef<Field[]>(['ratio', 'liters']);
-  const touchField = useCallback((field: Field) => {
-    const next = [field, ...lastTwoRef.current.filter((f) => f !== field)].slice(0, 2);
-    lastTwoRef.current = next;
-  }, []);
-
-  const recomputeDerived = useCallback(
-    (nextLitersText: string, nextRatioText: string, nextGramsText: string) => {
-      const a = lastTwoRef.current[0];
-      const b = lastTwoRef.current[1];
-      const sources = new Set<Field>([a, b]);
-      const derived: Field = sources.has('liters')
-        ? sources.has('ratio')
-          ? 'grams'
-          : 'ratio'
-        : 'liters';
-
-      const liters = toNumberOrNaN(nextLitersText);
-      const ratio = toNumberOrNaN(nextRatioText);
-      const grams = toNumberOrNaN(nextGramsText);
-
-      if (derived === 'grams') {
-        const g = calculateCoffee(liters, ratio);
-        if (Number.isFinite(g) && g > 0) setGramsText(formatNumberForInput(g, 1));
-      } else if (derived === 'liters') {
-        const l = calculateWater(grams, ratio);
-        if (Number.isFinite(l) && l > 0) setLitersText(formatNumberForInput(l, 3));
-      } else {
-        const r = calculateRatio(liters, grams);
-        if (Number.isFinite(r) && r > 0) setRatioText(formatNumberForInput(r, 2));
-      }
-    },
-    []
-  );
-
-  const onChangeLiters = useCallback(
-    (raw: string) => {
-      touchField('liters');
-      const next = sanitizeNumericText(raw);
-      setLitersText(next);
-      recomputeDerived(next, ratioText, gramsText);
-    },
-    [gramsText, ratioText, recomputeDerived, touchField]
-  );
-
-  const onChangeRatio = useCallback(
-    (raw: string) => {
-      touchField('ratio');
-      const next = sanitizeNumericText(raw);
-      setRatioText(next);
-      recomputeDerived(litersText, next, gramsText);
-    },
-    [gramsText, litersText, recomputeDerived, touchField]
-  );
-
-  const onChangeGrams = useCallback(
-    (raw: string) => {
-      touchField('grams');
-      const next = sanitizeNumericText(raw);
-      setGramsText(next);
-      recomputeDerived(litersText, ratioText, next);
-    },
-    [litersText, ratioText, recomputeDerived, touchField]
-  );
-
-  const gramsNumber = useMemo(() => toNumberOrNaN(gramsText), [gramsText]);
-  const gramsDisplay = useMemo(() => {
-    if (!Number.isFinite(gramsNumber) || gramsNumber <= 0) return '—';
-    const rounded = Math.round(gramsNumber);
-    return String(rounded);
-  }, [gramsNumber]);
-
-  const keyboardType = useMemo(() => {
-    return Platform.select({
-      ios: 'decimal-pad' as const,
-      android: 'decimal-pad' as const,
-      default: 'numeric' as const,
-    });
-  }, []);
+  const keyboardType = Platform.OS === 'ios' ? 'decimal-pad' : 'numeric';
 
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
-        <Text style={styles.title}>Brew Calculator</Text>
-        <Text style={styles.subtitle}>Dial in water, ratio, and coffee.</Text>
+        <Text style={styles.title}>Brew</Text>
+        <Text style={styles.subtitle}>Dial in your parameters.</Text>
 
-        <View style={styles.card}>
-          {/* Liters Row */}
-          <View style={styles.row}>
-            <Text style={styles.label}>Liters</Text>
+        <View style={styles.form}>
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.label}>Water (Liters)</Text>
             <TextInput
-              value={litersText}
-              onChangeText={onChangeLiters}
-              placeholder="e.g. 1.5"
+              value={liters}
+              onChangeText={(val) => setLiters(sanitizeNumericText(val))}
+              onFocus={() => setActiveField('liters')}
+              onBlur={() => setActiveField(null)}
+              placeholder="1.5"
               placeholderTextColor={COLORS.muted}
               keyboardType={keyboardType}
-              inputMode="decimal"
-              style={styles.input}
-              selectionColor={COLORS.accent}
-              returnKeyType="done"
+              style={[styles.input, activeField === 'liters' && styles.inputActive]}
             />
           </View>
 
-          <View style={styles.divider} />
-
-          {/* Updated Ratio Row with "1:" label */}
-          <View style={[styles.row, { flexDirection: 'row', alignItems: 'center' }]}>
-            <View style={{ flex: 1 }}>
-               <Text style={styles.label}>Ratio</Text>
-            </View>
-            <Text style={{ fontSize: 18, fontWeight: '700', color: COLORS.text, marginRight: 8 }}>1 :</Text>
-            <TextInput
-              value={ratioText}
-              onChangeText={onChangeRatio}
-              placeholder="16"
-              placeholderTextColor={COLORS.muted}
-              keyboardType={keyboardType}
-              inputMode="decimal"
-              style={[styles.input, { flex: 2 }]}
-              selectionColor={COLORS.accent}
-              returnKeyType="done"
-            />
-          </View>
-
-          <View style={styles.divider} />
-
-          {/* Coffee Row */}
-          <View style={styles.row}>
-            <Text style={styles.label}>Coffee (g)</Text>
-            <TextInput
-              value={gramsText}
-              onChangeText={onChangeGrams}
-              placeholder="e.g. 94"
-              placeholderTextColor={COLORS.muted}
-              keyboardType={keyboardType}
-              inputMode="decimal"
-              style={styles.input}
-              selectionColor={COLORS.accent}
-              returnKeyType="done"
-            />
+          <View style={styles.fieldWrapper}>
+            <Text style={styles.label}>Ratio</Text>
+            {/* Wrapped in Pressable to make the whole row interactive */}
+            <Pressable 
+              onPress={() => ratioInputRef.current?.focus()} 
+              style={[styles.row, activeField === 'ratio' && styles.inputActive]}
+            >
+              <Text style={styles.prefix}>1 :</Text>
+              <TextInput
+                ref={ratioInputRef}
+                value={ratio}
+                onChangeText={(val) => setRatio(sanitizeNumericText(val))}
+                onFocus={() => setActiveField('ratio')}
+                onBlur={() => setActiveField(null)}
+                placeholder="16"
+                placeholderTextColor={COLORS.muted}
+                keyboardType={keyboardType}
+                style={styles.inlineInput}
+              />
+            </Pressable>
           </View>
         </View>
 
-        <View style={styles.resultWrap}>
-          <Text style={styles.resultLabel}>Coffee grams</Text>
-          <Text style={styles.resultValue}>{gramsDisplay}</Text>
+        {/* Hero Result Section - Anchored to form with margin */}
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultLabel}>Coffee Required</Text>
+          <Text style={styles.resultValue}>{coffeeGrams === '—' ? '—' : `${coffeeGrams}g`}</Text>
         </View>
       </View>
     </SafeAreaView>
@@ -206,88 +101,42 @@ export default function BrewScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 24,
-    backgroundColor: COLORS.bg,
-  },
-  title: {
-    color: COLORS.text,
-    fontSize: 28,
-    fontWeight: '800',
-    letterSpacing: 0.2,
-  },
-  subtitle: {
-    marginTop: 6,
-    color: COLORS.muted,
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  card: {
-    marginTop: 18,
-    backgroundColor: COLORS.card,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    overflow: 'hidden',
-    shadowColor: COLORS.text,
-    shadowOpacity: 0.04,
-    shadowRadius: 15,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-  },
-  row: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  label: {
-    color: COLORS.muted,
-    fontSize: 13,
-    fontWeight: '700',
-    marginBottom: 8,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
+  safe: { flex: 1, backgroundColor: COLORS.bg },
+  container: { flex: 1, padding: 24 },
+  title: { fontSize: 32, fontWeight: '800', color: COLORS.text, letterSpacing: -0.5 },
+  subtitle: { fontSize: 17, color: COLORS.muted, marginTop: 4, marginBottom: 28 },
+  
+  form: { gap: 24 },
+  fieldWrapper: { gap: 8 },
+  
+  label: { fontSize: 14, fontWeight: '600', color: COLORS.text },
+  
   input: {
-    color: COLORS.text,
-    fontSize: 18,
-    fontWeight: '700',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    height: 50,
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
     borderRadius: 12,
-    backgroundColor: 'rgba(214, 140, 69, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(214, 140, 69, 0.2)',
+    paddingHorizontal: 16,
+    fontSize: 18,
+    fontWeight: '500',
+    color: COLORS.text,
   },
-  divider: {
-    height: 1,
-    backgroundColor: COLORS.border,
-  },
-  resultWrap: {
-    flex: 1,
-    justifyContent: 'flex-end',
+  
+  row: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingBottom: 6,
+    height: 50,
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    borderRadius: 12,
+    paddingHorizontal: 16,
   },
-  resultLabel: {
-    color: COLORS.muted,
-    fontSize: 14,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-    marginBottom: 6,
-    textTransform: 'uppercase',
-  },
-  resultValue: {
-    color: COLORS.accent,
-    fontSize: 72,
-    fontWeight: '900',
-    textAlign: 'center',
-    includeFontPadding: false,
-  },
+  prefix: { fontSize: 18, fontWeight: '600', color: COLORS.muted, marginRight: 8 },
+  inlineInput: { flex: 1, fontSize: 18, fontWeight: '500', color: COLORS.text },
+  
+  inputActive: { borderColor: COLORS.accent },
+  
+  resultContainer: { marginTop: 40, alignItems: 'center' },
+  resultLabel: { fontSize: 14, fontWeight: '500', color: COLORS.muted },
+  resultValue: { fontSize: 72, fontWeight: '800', color: COLORS.text, letterSpacing: -2, marginTop: 4 },
 });
