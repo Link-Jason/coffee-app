@@ -5,14 +5,14 @@ import { calculateCoffee } from '../lib/brewEngine';
 
 type Field = 'liters' | 'ratio';
 
-// Studio-grade Palette: Whisper Sage + Copper Accent
+// The "Midnight Pro" Palette: Inky darks + High-Contrast Amber
 const COLORS = {
-  bg: '#F7F8F7',          // Whisper Sage
-  surface: '#FFFFFF',      // Pure Paper Cards
-  textPrimary: '#111111',  // Strong hierarchy
-  textSecondary: '#7A7A7A', // Muted labels
-  accent: '#A65B3C',       // Copper accent for focus
-  border: '#E6E6E6',
+  bg: '#0F0F0F',           // Near-black background
+  surface: '#1A1A1A',      // Charcoal card
+  textPrimary: '#FAFAFA',  // Bright white
+  textSecondary: '#888888',// Mid-grey labels
+  accent: '#F59E0B',       // Vibrant Amber accent
+  border: '#333333',       // Subtle separation
 };
 
 function sanitizeNumericText(input: string): string {
@@ -36,7 +36,6 @@ export default function BrewScreen() {
   const [activeField, setActiveField] = useState<Field | null>(null);
   const ratioInputRef = useRef<TextInput>(null);
 
-  // Hero coffee grams
   const coffeeGrams = useMemo(() => {
     if (!liters || !ratio) return '—';
     const l = parseFloat(liters) || 0;
@@ -45,28 +44,27 @@ export default function BrewScreen() {
     return isFinite(result) && result > 0 ? Math.round(result).toString() : '—';
   }, [liters, ratio]);
 
-  // Animated scale for micro-interaction on ratio input
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.97, useNativeDriver: true }).start();
   const onPressOut = () => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start();
 
   return (
     <SafeAreaView style={styles.safe}>
-      <LinearGradient colors={['#F7F8F7', '#FFFFFF']} style={{ flex: 1 }}>
+      {/* Subtle dark gradient for depth */}
+      <LinearGradient colors={['#161616', '#0F0F0F']} style={{ flex: 1 }}>
         <View style={styles.container}>
 
-          {/* Hero Result Section */}
-          <Animated.View style={styles.resultContainer}>
+          {/* Left-Aligned Editorial Result */}
+          <View style={styles.resultContainer}>
             <Text style={styles.resultValue}>
               {coffeeGrams}
               {coffeeGrams !== '—' && <Text style={styles.unit}>g</Text>}
             </Text>
             <Text style={styles.resultLabel}>Coffee Required</Text>
-          </Animated.View>
+          </View>
 
-          {/* Inputs */}
+          {/* Form */}
           <View style={styles.form}>
-            {/* Water Input */}
             <Animated.View style={[styles.inputWrapper, activeField === 'liters' && styles.inputActiveWrapper]}>
               <Text style={[styles.label, activeField === 'liters' && styles.activeLabel]}>Water (Liters)</Text>
               <TextInput
@@ -75,13 +73,12 @@ export default function BrewScreen() {
                 onFocus={() => setActiveField('liters')}
                 onBlur={() => setActiveField(null)}
                 placeholder="1.5"
-                placeholderTextColor={COLORS.textSecondary}
+                placeholderTextColor="#444444"
                 keyboardType="decimal-pad"
                 style={styles.input}
               />
             </Animated.View>
 
-            {/* Ratio Input */}
             <Pressable
               onPress={() => ratioInputRef.current?.focus()}
               onPressIn={onPressIn}
@@ -99,7 +96,7 @@ export default function BrewScreen() {
                     onFocus={() => setActiveField('ratio')}
                     onBlur={() => setActiveField(null)}
                     placeholder="16"
-                    placeholderTextColor={COLORS.textSecondary}
+                    placeholderTextColor="#444444"
                     keyboardType="decimal-pad"
                     style={styles.inlineInput}
                   />
@@ -114,16 +111,16 @@ export default function BrewScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1 },
+  safe: { flex: 1, backgroundColor: COLORS.bg },
   container: { flex: 1, paddingHorizontal: 36, paddingTop: 72 },
 
-  // Hero Result
+  // Result Section (Editorial/Left-Aligned)
   resultContainer: { marginBottom: 72, alignItems: 'flex-start' },
   resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.textPrimary, letterSpacing: -3 },
   unit: { fontSize: 32, fontWeight: '500', color: COLORS.textSecondary },
   resultLabel: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginTop: 6, letterSpacing: 1 },
 
-  // Form Inputs
+  // Inputs
   form: { gap: 28 },
   inputWrapper: {
     backgroundColor: COLORS.surface,
@@ -132,11 +129,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     paddingHorizontal: 20,
     paddingVertical: 14,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
   },
   inputActiveWrapper: { borderColor: COLORS.accent, borderWidth: 1.5 },
 
