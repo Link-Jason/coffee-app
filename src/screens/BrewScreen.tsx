@@ -3,17 +3,15 @@ import { Animated, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } 
 import { LinearGradient } from 'expo-linear-gradient';
 import { calculateCoffee } from '../lib/brewEngine';
 
-type Field = 'liters' | 'ratio';
-
-// The "Midnight Pro" Palette: Inky darks + High-Contrast Amber
+// The "Midnight Rust" Palette: Inky darks + Artisan Rust
 const COLORS = {
-    bg: '#0F0F0F',           // Inky Dark
-    surface: '#1A1A1A',      // Charcoal
-    textPrimary: '#FAFAFA',  // Bright White
-    textSecondary: '#888888',// Neutral Grey
-    accent: '#A65B3C',       // <--- This is your Artisan Rust
-    border: '#333333',
-  };
+  bg: '#0F0F0F',           // Near-black background
+  surface: '#1A1A1A',      // Charcoal card
+  textPrimary: '#FAFAFA',  // Bright white
+  textSecondary: '#888888',// Neutral mid-grey
+  accent: '#A65B3C',       // Artisan Rust
+  border: '#333333',
+};
 
 function sanitizeNumericText(input: string): string {
   const normalized = input.replace(',', '.');
@@ -33,7 +31,6 @@ function sanitizeNumericText(input: string): string {
 export default function BrewScreen() {
   const [liters, setLiters] = useState<string>('1.5');
   const [ratio, setRatio] = useState<string>('16');
-  const [activeField, setActiveField] = useState<Field | null>(null);
   const ratioInputRef = useRef<TextInput>(null);
 
   const coffeeGrams = useMemo(() => {
@@ -50,11 +47,10 @@ export default function BrewScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      {/* Subtle dark gradient for depth */}
       <LinearGradient colors={['#161616', '#0F0F0F']} style={{ flex: 1 }}>
         <View style={styles.container}>
 
-          {/* Left-Aligned Editorial Result */}
+          {/* Hero Result Section */}
           <View style={styles.resultContainer}>
             <Text style={styles.resultValue}>
               {coffeeGrams}
@@ -63,21 +59,19 @@ export default function BrewScreen() {
             <Text style={styles.resultLabel}>Coffee Required</Text>
           </View>
 
-          {/* Form */}
+          {/* Input Form */}
           <View style={styles.form}>
-            <Animated.View style={[styles.inputWrapper, activeField === 'liters' && styles.inputActiveWrapper]}>
-              <Text style={[styles.label, activeField === 'liters' && styles.activeLabel]}>Water (Liters)</Text>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.label}>Water (Liters)</Text>
               <TextInput
                 value={liters}
                 onChangeText={(val) => setLiters(sanitizeNumericText(val))}
-                onFocus={() => setActiveField('liters')}
-                onBlur={() => setActiveField(null)}
                 placeholder="1.5"
                 placeholderTextColor="#444444"
                 keyboardType="decimal-pad"
                 style={styles.input}
               />
-            </Animated.View>
+            </View>
 
             <Pressable
               onPress={() => ratioInputRef.current?.focus()}
@@ -85,23 +79,21 @@ export default function BrewScreen() {
               onPressOut={onPressOut}
               style={{ transform: [{ scale: scaleAnim }] }}
             >
-              <Animated.View style={[styles.inputWrapper, activeField === 'ratio' && styles.inputActiveWrapper]}>
-                <Text style={[styles.label, activeField === 'ratio' && styles.activeLabel]}>Ratio</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.label}>Ratio</Text>
                 <View style={styles.row}>
                   <Text style={styles.prefix}>1 :</Text>
                   <TextInput
                     ref={ratioInputRef}
                     value={ratio}
                     onChangeText={(val) => setRatio(sanitizeNumericText(val))}
-                    onFocus={() => setActiveField('ratio')}
-                    onBlur={() => setActiveField(null)}
                     placeholder="16"
                     placeholderTextColor="#444444"
                     keyboardType="decimal-pad"
                     style={styles.inlineInput}
                   />
                 </View>
-              </Animated.View>
+              </View>
             </Pressable>
           </View>
         </View>
@@ -114,7 +106,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.bg },
   container: { flex: 1, paddingHorizontal: 36, paddingTop: 72 },
 
-  // Result Section (Editorial/Left-Aligned)
+  // Result Section
   resultContainer: { marginBottom: 72, alignItems: 'flex-start' },
   resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.accent, letterSpacing: -3 },
   unit: { fontSize: 32, fontWeight: '500', color: COLORS.textSecondary },
@@ -125,16 +117,13 @@ const styles = StyleSheet.create({
   inputWrapper: {
     backgroundColor: COLORS.surface,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderWidth: 1.5, // Thicker border for the Rust
+    borderColor: COLORS.accent, // Permanent Rust border
     paddingHorizontal: 20,
     paddingVertical: 14,
   },
-  inputActiveWrapper: { borderColor: COLORS.accent, borderWidth: 1.5 },
-
   label: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginBottom: 6, letterSpacing: 0.5 },
-  activeLabel: { color: COLORS.accent },
-
+  
   row: { flexDirection: 'row', alignItems: 'center' },
   prefix: { fontSize: 18, fontWeight: '600', color: COLORS.textSecondary, marginRight: 8 },
   inlineInput: { flex: 1, fontSize: 18, fontWeight: '500', color: COLORS.textPrimary },
