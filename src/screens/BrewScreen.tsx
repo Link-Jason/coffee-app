@@ -1,17 +1,18 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Animated, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { calculateCoffee } from '../lib/brewEngine';
 
 type Field = 'liters' | 'ratio';
 
-// Studio-Level Tonal System
+// Studio-grade Palette: Whisper Sage + Copper Accent
 const COLORS = {
-  bg: '#F5F5F5',            // Light neutral background
-  surface: '#FFFFFF',        // Elevated card surface
-  textPrimary: '#111111',    // Deep, elegant black
-  textSecondary: '#7A7A7A',  // Subtle, sophisticated gray
-  accent: '#2563EB',         // Minimal, cool blue for micro accents
-  border: '#E6E6E6',         // Soft, subtle boundaries
+  bg: '#F7F8F7',          // Whisper Sage
+  surface: '#FFFFFF',      // Pure Paper Cards
+  textPrimary: '#111111',  // Strong hierarchy
+  textSecondary: '#7A7A7A', // Muted labels
+  accent: '#A65B3C',       // Copper accent for focus
+  border: '#E6E6E6',
 };
 
 function sanitizeNumericText(input: string): string {
@@ -33,9 +34,9 @@ export default function BrewScreen() {
   const [liters, setLiters] = useState<string>('1.5');
   const [ratio, setRatio] = useState<string>('16');
   const [activeField, setActiveField] = useState<Field | null>(null);
-
   const ratioInputRef = useRef<TextInput>(null);
 
+  // Hero coffee grams
   const coffeeGrams = useMemo(() => {
     if (!liters || !ratio) return '—';
     const l = parseFloat(liters) || 0;
@@ -44,104 +45,106 @@ export default function BrewScreen() {
     return isFinite(result) && result > 0 ? Math.round(result).toString() : '—';
   }, [liters, ratio]);
 
-  // Animated press effect
+  // Animated scale for micro-interaction on ratio input
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.98, useNativeDriver: true }).start();
+  const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.97, useNativeDriver: true }).start();
   const onPressOut = () => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start();
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.container}>
+      <LinearGradient colors={['#F7F8F7', '#FFFFFF']} style={{ flex: 1 }}>
+        <View style={styles.container}>
 
-        {/* Hero Result */}
-        <View style={styles.resultContainer}>
-          <Text style={styles.resultValue}>
-            {coffeeGrams}
-            {coffeeGrams !== '—' && <Text style={styles.unit}>g</Text>}
-          </Text>
-          <Text style={styles.resultLabel}>Coffee Required</Text>
-        </View>
-
-        {/* Inputs */}
-        <View style={styles.form}>
-          {/* Water */}
-          <Animated.View style={[styles.inputWrapper, activeField === 'liters' && styles.inputActiveWrapper]}>
-            <Text style={styles.label}>Water (Liters)</Text>
-            <TextInput
-              value={liters}
-              onChangeText={(val) => setLiters(sanitizeNumericText(val))}
-              onFocus={() => setActiveField('liters')}
-              onBlur={() => setActiveField(null)}
-              placeholder="1.5"
-              placeholderTextColor={COLORS.textSecondary}
-              keyboardType="decimal-pad"
-              style={styles.input}
-            />
+          {/* Hero Result Section */}
+          <Animated.View style={styles.resultContainer}>
+            <Text style={styles.resultValue}>
+              {coffeeGrams}
+              {coffeeGrams !== '—' && <Text style={styles.unit}>g</Text>}
+            </Text>
+            <Text style={styles.resultLabel}>Coffee Required</Text>
           </Animated.View>
 
-          {/* Ratio */}
-          <Pressable
-            onPress={() => ratioInputRef.current?.focus()}
-            onPressIn={onPressIn}
-            onPressOut={onPressOut}
-            style={{ transform: [{ scale: scaleAnim }] }}
-          >
-            <Animated.View style={[styles.inputWrapper, activeField === 'ratio' && styles.inputActiveWrapper]}>
-              <Text style={styles.label}>Ratio</Text>
-              <View style={styles.row}>
-                <Text style={styles.prefix}>1 :</Text>
-                <TextInput
-                  ref={ratioInputRef}
-                  value={ratio}
-                  onChangeText={(val) => setRatio(sanitizeNumericText(val))}
-                  onFocus={() => setActiveField('ratio')}
-                  onBlur={() => setActiveField(null)}
-                  placeholder="16"
-                  placeholderTextColor={COLORS.textSecondary}
-                  keyboardType="decimal-pad"
-                  style={styles.inlineInput}
-                />
-              </View>
+          {/* Inputs */}
+          <View style={styles.form}>
+            {/* Water Input */}
+            <Animated.View style={[styles.inputWrapper, activeField === 'liters' && styles.inputActiveWrapper]}>
+              <Text style={[styles.label, activeField === 'liters' && styles.activeLabel]}>Water (Liters)</Text>
+              <TextInput
+                value={liters}
+                onChangeText={(val) => setLiters(sanitizeNumericText(val))}
+                onFocus={() => setActiveField('liters')}
+                onBlur={() => setActiveField(null)}
+                placeholder="1.5"
+                placeholderTextColor={COLORS.textSecondary}
+                keyboardType="decimal-pad"
+                style={styles.input}
+              />
             </Animated.View>
-          </Pressable>
+
+            {/* Ratio Input */}
+            <Pressable
+              onPress={() => ratioInputRef.current?.focus()}
+              onPressIn={onPressIn}
+              onPressOut={onPressOut}
+              style={{ transform: [{ scale: scaleAnim }] }}
+            >
+              <Animated.View style={[styles.inputWrapper, activeField === 'ratio' && styles.inputActiveWrapper]}>
+                <Text style={[styles.label, activeField === 'ratio' && styles.activeLabel]}>Ratio</Text>
+                <View style={styles.row}>
+                  <Text style={styles.prefix}>1 :</Text>
+                  <TextInput
+                    ref={ratioInputRef}
+                    value={ratio}
+                    onChangeText={(val) => setRatio(sanitizeNumericText(val))}
+                    onFocus={() => setActiveField('ratio')}
+                    onBlur={() => setActiveField(null)}
+                    placeholder="16"
+                    placeholderTextColor={COLORS.textSecondary}
+                    keyboardType="decimal-pad"
+                    style={styles.inlineInput}
+                  />
+                </View>
+              </Animated.View>
+            </Pressable>
+          </View>
         </View>
-      </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.bg },
+  safe: { flex: 1 },
   container: { flex: 1, paddingHorizontal: 36, paddingTop: 72 },
 
   // Hero Result
-  resultContainer: { marginBottom: 64, alignItems: 'center' },
-  resultValue: { fontSize: 96, fontWeight: '800', color: COLORS.textPrimary, letterSpacing: -3 },
-  unit: { fontSize: 32, fontWeight: '400', color: COLORS.textSecondary, lineHeight: 36 },
-  resultLabel: { fontSize: 13, fontWeight: '500', color: COLORS.textSecondary, marginTop: 6, letterSpacing: 1 },
+  resultContainer: { marginBottom: 72, alignItems: 'flex-start' },
+  resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.textPrimary, letterSpacing: -3 },
+  unit: { fontSize: 32, fontWeight: '500', color: COLORS.textSecondary },
+  resultLabel: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginTop: 6, letterSpacing: 1 },
 
-  // Form
+  // Form Inputs
   form: { gap: 28 },
   inputWrapper: {
     backgroundColor: COLORS.surface,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
-    paddingHorizontal: 18,
+    paddingHorizontal: 20,
     paddingVertical: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.03,
     shadowRadius: 6,
-    elevation: 1,
+    elevation: 2,
   },
   inputActiveWrapper: { borderColor: COLORS.accent, borderWidth: 1.5 },
 
   label: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginBottom: 6, letterSpacing: 0.5 },
+  activeLabel: { color: COLORS.accent },
 
   row: { flexDirection: 'row', alignItems: 'center' },
   prefix: { fontSize: 18, fontWeight: '600', color: COLORS.textSecondary, marginRight: 8 },
   inlineInput: { flex: 1, fontSize: 18, fontWeight: '500', color: COLORS.textPrimary },
-
   input: { fontSize: 18, fontWeight: '500', color: COLORS.textPrimary, height: 40 },
 });
