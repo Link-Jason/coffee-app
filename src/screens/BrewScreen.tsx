@@ -5,13 +5,14 @@ import { calculateCoffee, calculateRatio, calculateWater } from '../lib/brewEngi
 
 type Field = 'liters' | 'ratio' | 'grams';
 
+// Updated: Warmer "Coffee Shop" color palette
 const COLORS = {
-  bg: '#F8F8F8',
-  text: '#222222',
-  muted: 'rgba(34, 34, 34, 0.55)',
+  bg: '#FDFBF7',          // Warm cream background
+  text: '#2D2926',        // Soft charcoal text (softer than pure black)
+  muted: 'rgba(45, 41, 38, 0.55)',
   card: '#FFFFFF',
-  accent: '#1ABC9C',
-  border: 'rgba(34, 34, 34, 0.10)',
+  accent: '#D68C45',      // Warm coffee-inspired accent
+  border: 'rgba(45, 41, 38, 0.12)',
 };
 
 function sanitizeNumericText(input: string): string {
@@ -139,6 +140,7 @@ export default function BrewScreen() {
         <Text style={styles.subtitle}>Dial in water, ratio, and coffee.</Text>
 
         <View style={styles.card}>
+          {/* Liters Row */}
           <View style={styles.row}>
             <Text style={styles.label}>Liters</Text>
             <TextInput
@@ -156,16 +158,20 @@ export default function BrewScreen() {
 
           <View style={styles.divider} />
 
-          <View style={styles.row}>
-            <Text style={styles.label}>Ratio</Text>
+          {/* Updated Ratio Row with "1:" label */}
+          <View style={[styles.row, { flexDirection: 'row', alignItems: 'center' }]}>
+            <View style={{ flex: 1 }}>
+               <Text style={styles.label}>Ratio</Text>
+            </View>
+            <Text style={{ fontSize: 18, fontWeight: '700', color: COLORS.text, marginRight: 8 }}>1 :</Text>
             <TextInput
               value={ratioText}
               onChangeText={onChangeRatio}
-              placeholder="e.g. 16"
+              placeholder="16"
               placeholderTextColor={COLORS.muted}
               keyboardType={keyboardType}
               inputMode="decimal"
-              style={styles.input}
+              style={[styles.input, { flex: 2 }]}
               selectionColor={COLORS.accent}
               returnKeyType="done"
             />
@@ -173,6 +179,7 @@ export default function BrewScreen() {
 
           <View style={styles.divider} />
 
+          {/* Coffee Row */}
           <View style={styles.row}>
             <Text style={styles.label}>Coffee (g)</Text>
             <TextInput
@@ -225,15 +232,15 @@ const styles = StyleSheet.create({
   card: {
     marginTop: 18,
     backgroundColor: COLORS.card,
-    borderRadius: 18,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: COLORS.border,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 2,
+    shadowColor: COLORS.text,
+    shadowOpacity: 0.04,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
   },
   row: {
     paddingHorizontal: 16,
@@ -244,7 +251,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     marginBottom: 8,
-    letterSpacing: 0.2,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   input: {
     color: COLORS.text,
@@ -253,9 +261,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 12,
-    backgroundColor: 'rgba(26, 188, 156, 0.08)',
+    backgroundColor: 'rgba(214, 140, 69, 0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(26, 188, 156, 0.22)',
+    borderColor: 'rgba(214, 140, 69, 0.2)',
   },
   divider: {
     height: 1,
@@ -273,13 +281,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.2,
     marginBottom: 6,
+    textTransform: 'uppercase',
   },
   resultValue: {
     color: COLORS.accent,
-    fontSize: 64,
+    fontSize: 72,
     fontWeight: '900',
     textAlign: 'center',
     includeFontPadding: false,
   },
 });
-
