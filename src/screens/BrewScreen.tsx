@@ -4,12 +4,13 @@ import { calculateCoffee } from '../lib/brewEngine';
 
 type Field = 'liters' | 'ratio';
 
+// The "Premium Minimalist" Palette
 const COLORS = {
-  bg: '#FFFFFF',
-  text: '#111111',
-  muted: '#888888',
-  accent: '#2563EB',
-  border: '#E5E5E5',
+  bg: '#F6F4EF',          // Soft, organic warm neutral
+  text: '#1C1C1C',        // Deep, rich espresso
+  muted: '#8A857C',       // Sophisticated taupe
+  accent: '#2D4A3E',      // Deep, grounded forest green
+  card: '#FFFFFF',        // Pure white 'paper'
 };
 
 function sanitizeNumericText(input: string): string {
@@ -32,11 +33,9 @@ export default function BrewScreen() {
   const [ratio, setRatio] = useState<string>('16');
   const [activeField, setActiveField] = useState<Field | null>(null);
   
-  // Ref to programmatically focus the Ratio input
   const ratioInputRef = useRef<TextInput>(null);
 
   const coffeeGrams = useMemo(() => {
-    // Return empty state if values are missing
     if (!liters || !ratio) return '—';
     const l = parseFloat(liters) || 0;
     const r = parseFloat(ratio) || 0;
@@ -53,6 +52,7 @@ export default function BrewScreen() {
         <Text style={styles.subtitle}>Dial in your parameters.</Text>
 
         <View style={styles.form}>
+          {/* Water Input */}
           <View style={styles.fieldWrapper}>
             <Text style={styles.label}>Water (Liters)</Text>
             <TextInput
@@ -67,9 +67,9 @@ export default function BrewScreen() {
             />
           </View>
 
+          {/* Ratio Input */}
           <View style={styles.fieldWrapper}>
             <Text style={styles.label}>Ratio</Text>
-            {/* Wrapped in Pressable to make the whole row interactive */}
             <Pressable 
               onPress={() => ratioInputRef.current?.focus()} 
               style={[styles.row, activeField === 'ratio' && styles.inputActive]}
@@ -90,7 +90,7 @@ export default function BrewScreen() {
           </View>
         </View>
 
-        {/* Hero Result Section - Anchored to form with margin */}
+        {/* Hero Result Section */}
         <View style={styles.resultContainer}>
           <Text style={styles.resultLabel}>Coffee Required</Text>
           <Text style={styles.resultValue}>{coffeeGrams === '—' ? '—' : `${coffeeGrams}g`}</Text>
@@ -104,39 +104,50 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.bg },
   container: { flex: 1, padding: 24 },
   title: { fontSize: 32, fontWeight: '800', color: COLORS.text, letterSpacing: -0.5 },
-  subtitle: { fontSize: 17, color: COLORS.muted, marginTop: 4, marginBottom: 28 },
+  subtitle: { fontSize: 16, color: COLORS.muted, marginTop: 4, marginBottom: 32 },
   
   form: { gap: 24 },
   fieldWrapper: { gap: 8 },
   
-  label: { fontSize: 14, fontWeight: '600', color: COLORS.text },
+  label: { fontSize: 13, fontWeight: '600', color: COLORS.muted },
   
+  // Input uses depth (shadow) instead of borders for 'Premium Minimalist' feel
   input: {
-    height: 50,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
+    height: 52,
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    paddingHorizontal: 20,
     fontSize: 18,
     fontWeight: '500',
     color: COLORS.text,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03, // Very subtle, elegant lift
+    shadowRadius: 10,
+    elevation: 2, 
   },
   
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 50,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
+    height: 52,
+    backgroundColor: COLORS.card,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 10,
+    elevation: 2,
   },
   prefix: { fontSize: 18, fontWeight: '600', color: COLORS.muted, marginRight: 8 },
   inlineInput: { flex: 1, fontSize: 18, fontWeight: '500', color: COLORS.text },
   
-  inputActive: { borderColor: COLORS.accent },
+  // Subtle accent focus effect
+  inputActive: { borderColor: COLORS.accent, borderWidth: 1 }, 
   
-  resultContainer: { marginTop: 40, alignItems: 'center' },
-  resultLabel: { fontSize: 14, fontWeight: '500', color: COLORS.muted },
-  resultValue: { fontSize: 72, fontWeight: '800', color: COLORS.text, letterSpacing: -2, marginTop: 4 },
+  // Hero Result Section
+  resultContainer: { marginTop: 52, alignItems: 'center' },
+  resultLabel: { fontSize: 13, fontWeight: '600', color: COLORS.muted, letterSpacing: 0.5 },
+  resultValue: { fontSize: 80, fontWeight: '700', color: COLORS.text, letterSpacing: -3, marginTop: 4 },
 });
