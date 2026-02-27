@@ -7,13 +7,13 @@ type Field = 'liters' | 'ratio';
 
 // The "Midnight Pro" Palette: Inky darks + High-Contrast Amber
 const COLORS = {
-  bg: '#0F0F0F',           // Near-black background
-  surface: '#1A1A1A',      // Charcoal card
-  textPrimary: '#FAFAFA',  // Bright white
-  textSecondary: '#888888',// Mid-grey labels
-  accent: '#F59E0B',       // Vibrant Amber accent
-  border: '#333333',       // Subtle separation
-};
+    bg: '#0F0F0F',           // Inky Dark
+    surface: '#1A1A1A',      // Charcoal
+    textPrimary: '#FAFAFA',  // Bright White
+    textSecondary: '#888888',// Neutral Grey
+    accent: '#A65B3C',       // <--- This is your Artisan Rust
+    border: '#333333',
+  };
 
 function sanitizeNumericText(input: string): string {
   const normalized = input.replace(',', '.');
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
 
   // Result Section (Editorial/Left-Aligned)
   resultContainer: { marginBottom: 72, alignItems: 'flex-start' },
-  resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.textPrimary, letterSpacing: -3 },
+  resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.accent, letterSpacing: -3 },
   unit: { fontSize: 32, fontWeight: '500', color: COLORS.textSecondary },
   resultLabel: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginTop: 6, letterSpacing: 1 },
 
