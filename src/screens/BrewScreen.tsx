@@ -3,13 +3,13 @@ import { Animated, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } 
 import { LinearGradient } from 'expo-linear-gradient';
 import { calculateCoffee } from '../lib/brewEngine';
 
-// The "Midnight Rust" Palette: Inky darks + Artisan Rust
+// The "Midnight Rust" Palette
 const COLORS = {
-  bg: '#0F0F0F',           // Near-black background
-  surface: '#1A1A1A',      // Charcoal card
-  textPrimary: '#FAFAFA',  // Bright white
-  textSecondary: '#888888',// Neutral mid-grey
-  accent: '#A65B3C',       // Artisan Rust
+  bg: '#0F0F0F',
+  surface: '#1A1A1A',
+  textPrimary: '#FAFAFA',
+  textSecondary: '#888888',
+  accent: '#A65B3C',
   border: '#333333',
 };
 
@@ -42,15 +42,17 @@ export default function BrewScreen() {
   }, [liters, ratio]);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const onPressIn = () => Animated.spring(scaleAnim, { toValue: 0.97, useNativeDriver: true }).start();
-  const onPressOut = () => Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start();
+  const onPressIn = () =>
+    Animated.spring(scaleAnim, { toValue: 0.97, useNativeDriver: true }).start();
+  const onPressOut = () =>
+    Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start();
 
   return (
     <SafeAreaView style={styles.safe}>
       <LinearGradient colors={['#161616', '#0F0F0F']} style={{ flex: 1 }}>
         <View style={styles.container}>
 
-          {/* Hero Result Section */}
+          {/* Hero Result */}
           <View style={styles.resultContainer}>
             <Text style={styles.resultValue}>
               {coffeeGrams}
@@ -59,7 +61,7 @@ export default function BrewScreen() {
             <Text style={styles.resultLabel}>Coffee Required</Text>
           </View>
 
-          {/* Input Form */}
+          {/* Inputs */}
           <View style={styles.form}>
             <View style={styles.inputWrapper}>
               <Text style={styles.label}>Water (Liters)</Text>
@@ -82,7 +84,7 @@ export default function BrewScreen() {
               <View style={styles.inputWrapper}>
                 <Text style={styles.label}>Ratio</Text>
                 <View style={styles.row}>
-                  <Text style={styles.prefix}>1 :</Text>
+                  <Text style={styles.prefix}>1:</Text>
                   <TextInput
                     ref={ratioInputRef}
                     value={ratio}
@@ -96,6 +98,7 @@ export default function BrewScreen() {
               </View>
             </Pressable>
           </View>
+
         </View>
       </LinearGradient>
     </SafeAreaView>
@@ -108,24 +111,81 @@ const styles = StyleSheet.create({
 
   // Result Section
   resultContainer: { marginBottom: 72, alignItems: 'flex-start' },
-  resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.accent, letterSpacing: -3 },
-  unit: { fontSize: 32, fontWeight: '500', color: COLORS.textSecondary },
-  resultLabel: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginTop: 6, letterSpacing: 1 },
+  resultValue: {
+    fontSize: 96,
+    fontWeight: '900',
+    color: COLORS.accent,
+    letterSpacing: -3,
+  },
+  unit: {
+    fontSize: 32,
+    fontWeight: '500',
+    color: COLORS.textSecondary,
+  },
+  resultLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+    marginTop: 6,
+    letterSpacing: 1,
+  },
 
   // Inputs
   form: { gap: 28 },
+
   inputWrapper: {
     backgroundColor: COLORS.surface,
     borderRadius: 16,
-    borderWidth: 1.5, // Thicker border for the Rust
-    borderColor: COLORS.accent, // Permanent Rust border
+    borderWidth: 1.5,
+    borderColor: COLORS.accent,
     paddingHorizontal: 20,
     paddingVertical: 14,
   },
-  label: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginBottom: 6, letterSpacing: 0.5 },
-  
-  row: { flexDirection: 'row', alignItems: 'center' },
-  prefix: { fontSize: 18, fontWeight: '600', color: COLORS.textSecondary, marginRight: 8 },
-  inlineInput: { flex: 1, fontSize: 18, fontWeight: '500', color: COLORS.textPrimary },
-  input: { fontSize: 18, fontWeight: '500', color: COLORS.textPrimary, height: 40 },
+
+  label: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+    marginBottom: 6,
+    letterSpacing: 0.5,
+  },
+
+  // 🔥 FIXED ANDROID ALIGNMENT
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 40,
+  },
+
+  prefix: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+    marginRight: 6,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    lineHeight: 22,
+  },
+
+  inlineInput: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '500',
+    color: COLORS.textPrimary,
+    paddingVertical: 0,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    lineHeight: 22,
+  },
+
+  input: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: COLORS.textPrimary,
+    height: 40,
+    paddingVertical: 0,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    lineHeight: 22,
+  },
 });
