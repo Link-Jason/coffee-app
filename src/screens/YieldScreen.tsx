@@ -1,32 +1,32 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import { calculateCoffee } from '../lib/brewEngine';
+import { calculateWater } from '../lib/brewEngine';
 
 const COLORS = { textPrimary: '#FAFAFA', textSecondary: '#888888', accent: '#A65B3C', surface: '#1A1A1A' };
 
-export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitize }: any) {
+export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize }: any) {
   
-  const coffeeGrams = useMemo(() => {
-    if (!liters || !ratio) return '—';
-    const result = calculateCoffee(parseFloat(liters), parseFloat(ratio));
-    return isFinite(result) && result > 0 ? Math.round(result).toString() : '—';
-  }, [liters, ratio]);
+  const waterYield = useMemo(() => {
+    if (!grams || !ratio) return '—';
+    const res = calculateWater(parseFloat(grams), parseFloat(ratio));
+    return isFinite(res) && res > 0 ? res.toFixed(2) : '—';
+  }, [grams, ratio]);
 
   return (
     <View style={styles.container}>
       <View style={styles.resultContainer}>
         <Text style={styles.resultValue}>
-          {coffeeGrams}{coffeeGrams !== '—' && <Text style={styles.unit}>g</Text>}
+          {waterYield}{waterYield !== '—' && <Text style={styles.unit}>L</Text>}
         </Text>
-        <Text style={styles.resultLabel}>Coffee Required</Text>
+        <Text style={styles.resultLabel}>Total Water Needed</Text>
       </View>
 
       <View style={styles.form}>
         <View style={styles.inputWrapper}>
-          <Text style={styles.label}>Water (Liters)</Text>
+          <Text style={styles.label}>Beans Remaining (Grams)</Text>
           <TextInput
-            value={liters}
-            onChangeText={(val) => setLiters(sanitize(val))}
+            value={grams}
+            onChangeText={(val) => setGrams(sanitize(val))}
             keyboardType="decimal-pad"
             style={styles.input}
           />
