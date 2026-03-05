@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native'; // Added ScrollView
 import { calculateWater } from '../lib/brewEngine';
 
 const COLORS = { textPrimary: '#FAFAFA', textSecondary: '#888888', accent: '#A65B3C', surface: '#1A1A1A' };
@@ -13,7 +13,11 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
   }, [grams, ratio]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.resultContainer}>
         <Text style={styles.resultValue}>
           {waterYield}{waterYield !== '—' && <Text style={styles.unit}>L</Text>}
@@ -45,12 +49,13 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 36, paddingTop: 72 },
+  container: { flex: 1 },
+  scrollContent: { paddingHorizontal: 36, paddingTop: 72, paddingBottom: 140 }, // Extra space for button
   resultContainer: { marginBottom: 72, alignItems: 'flex-start' },
   resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.accent, letterSpacing: -3 },
   unit: { fontSize: 32, color: COLORS.textSecondary },
