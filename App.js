@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import { SafeAreaView, StyleSheet, View, ScrollView } from 'react-native';
 import BrewScreen from './src/screens/BrewScreen';
 import YieldScreen from './src/screens/YieldScreen';
 
@@ -8,33 +7,41 @@ export default function App() {
   const [liters, setLiters] = useState('1.5');
   const [grams, setGrams] = useState('94');
   const [ratio, setRatio] = useState('16');
-  const pagerRef = React.useRef(null);
 
   const sanitize = (val) => val.replace(/[^0-9.]/g, '');
 
   return (
     <SafeAreaView style={styles.container}>
-      <PagerView style={styles.pager} initialPage={0} ref={pagerRef}>
-        <View key="1">
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.screenWrapper}>
           <BrewScreen 
             liters={liters} setLiters={setLiters} 
             ratio={ratio} setRatio={setRatio} 
             sanitize={sanitize} 
           />
         </View>
-        <View key="2">
+        <View style={styles.screenWrapper}>
           <YieldScreen 
             grams={grams} setGrams={setGrams} 
             ratio={ratio} setRatio={setRatio} 
             sanitize={sanitize} 
           />
         </View>
-      </PagerView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  pager: { flex: 1 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#000' 
+  },
+  scrollContainer: { 
+    flex: 1 
+  },
+  screenWrapper: {
+    width: '100%',
+    paddingBottom: 20
+  }
 });
