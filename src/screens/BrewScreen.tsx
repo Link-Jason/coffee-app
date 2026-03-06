@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native'; // Added ScrollView
+import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
 import { calculateCoffee } from '../lib/brewEngine';
 
 const COLORS = { textPrimary: '#FAFAFA', textSecondary: '#888888', accent: '#A65B3C', surface: '#1A1A1A' };
 
 export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitize }: any) {
-  
   const coffeeGrams = useMemo(() => {
     if (!liters || !ratio) return '—';
     const result = calculateCoffee(parseFloat(liters), parseFloat(ratio));
@@ -13,11 +12,7 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
   }, [liters, ratio]);
 
   return (
-    <ScrollView 
-      style={styles.container} 
-      contentContainerStyle={styles.scrollContent}
-      keyboardShouldPersistTaps="handled"
-    >
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
       <View style={styles.resultContainer}>
         <Text style={styles.resultValue}>
           {coffeeGrams}{coffeeGrams !== '—' && <Text style={styles.unit}>g</Text>}
@@ -38,7 +33,7 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
 
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Ratio</Text>
-          <View style={styles.row}>
+          <div style={styles.row}>
             <Text style={styles.prefix}>1:</Text>
             <TextInput
               value={ratio}
@@ -46,7 +41,7 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
               keyboardType="decimal-pad"
               style={styles.inlineInput}
             />
-          </View>
+          </div>
         </View>
       </View>
     </ScrollView>
@@ -55,8 +50,8 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scrollContent: { paddingHorizontal: 36, paddingTop: 72, paddingBottom: 140 }, // Extra space for button
-  resultContainer: { marginBottom: 72, alignItems: 'flex-start' },
+  scrollContent: { paddingHorizontal: 36, paddingTop: 60, paddingBottom: 140 },
+  resultContainer: { marginBottom: 40, alignItems: 'flex-start' },
   resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.accent, letterSpacing: -3 },
   unit: { fontSize: 32, color: COLORS.textSecondary },
   resultLabel: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginTop: 6, letterSpacing: 1 },
