@@ -2,7 +2,12 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
 import { calculateCoffee } from '../lib/brewEngine';
 
-const COLORS = { textPrimary: '#FAFAFA', textSecondary: '#888888', accent: '#A65B3C', surface: '#1A1A1A' };
+const COLORS = { 
+  textPrimary: '#FAFAFA', 
+  textSecondary: '#888888', 
+  accent: '#A65B3C', 
+  surface: '#1A1A1A' 
+};
 
 export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitize }: any) {
   const coffeeGrams = useMemo(() => {
@@ -12,7 +17,12 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
   }, [liters, ratio]);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.scrollContent} 
+      keyboardShouldPersistTaps="handled"
+    >
+      {/* Hero Result Section */}
       <View style={styles.resultContainer}>
         <Text style={styles.resultValue}>
           {coffeeGrams}{coffeeGrams !== '—' && <Text style={styles.unit}>g</Text>}
@@ -20,28 +30,31 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
         <Text style={styles.resultLabel}>Coffee Required</Text>
       </View>
 
+      {/* Input Form Section */}
       <View style={styles.form}>
+        {/* Water Input */}
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Water (Liters)</Text>
-          <TextInput
-            value={liters}
-            onChangeText={(val) => setLiters(sanitize(val))}
-            keyboardType="decimal-pad"
-            style={styles.input}
+          <TextInput 
+            value={liters} 
+            onChangeText={(val) => setLiters(sanitize(val))} 
+            keyboardType="decimal-pad" 
+            style={styles.input} 
           />
         </View>
 
+        {/* Ratio Input */}
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Ratio</Text>
-          <div style={styles.row}>
+          <View style={styles.row}> 
             <Text style={styles.prefix}>1:</Text>
-            <TextInput
-              value={ratio}
-              onChangeText={(val) => setRatio(sanitize(val))}
-              keyboardType="decimal-pad"
-              style={styles.inlineInput}
+            <TextInput 
+              value={ratio} 
+              onChangeText={(val) => setRatio(sanitize(val))} 
+              keyboardType="decimal-pad" 
+              style={styles.inlineInput} 
             />
-          </div>
+          </View> 
         </View>
       </View>
     </ScrollView>
@@ -56,7 +69,13 @@ const styles = StyleSheet.create({
   unit: { fontSize: 32, color: COLORS.textSecondary },
   resultLabel: { fontSize: 13, fontWeight: '600', color: COLORS.textSecondary, marginTop: 6, letterSpacing: 1 },
   form: { gap: 28 },
-  inputWrapper: { backgroundColor: COLORS.surface, borderRadius: 16, borderWidth: 1.5, borderColor: COLORS.accent, padding: 20 },
+  inputWrapper: { 
+    backgroundColor: COLORS.surface, 
+    borderRadius: 16, 
+    borderWidth: 1.5, 
+    borderColor: COLORS.accent, 
+    padding: 20 
+  },
   label: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 6 },
   row: { flexDirection: 'row', alignItems: 'center', height: 40 },
   prefix: { fontSize: 18, color: COLORS.textSecondary, marginRight: 6 },

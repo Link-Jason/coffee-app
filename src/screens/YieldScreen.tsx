@@ -33,7 +33,7 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
 
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Ratio</Text>
-          <div style={styles.row}>
+          <View style={styles.row}> {/* Fixed: changed from div to View */}
             <Text style={styles.prefix}>1:</Text>
             <TextInput
               value={ratio}
@@ -41,7 +41,7 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
               keyboardType="decimal-pad"
               style={styles.inlineInput}
             />
-          </div>
+          </View> {/* Fixed: changed from /div to /View */}
         </View>
       </View>
     </ScrollView>
