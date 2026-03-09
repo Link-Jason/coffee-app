@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
 import { calculateWater } from '../lib/brewEngine';
+import { CoffeeContext } from '../context/CoffeeContext';
 
 const COLORS = { 
   textPrimary: '#FAFAFA', 
@@ -9,7 +10,10 @@ const COLORS = {
   surface: '#1A1A1A' 
 };
 
-export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize }: any) {
+export default function YieldScreen() {
+  // Pulling the shared state from our "Brain"
+  const { grams, setGrams, ratio, setRatio, sanitize } = useContext(CoffeeContext);
+
   const waterYield = useMemo(() => {
     if (!grams || !ratio) return '—';
     const res = calculateWater(parseFloat(grams), parseFloat(ratio));
@@ -40,6 +44,8 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
             onChangeText={(val) => setGrams(sanitize(val))}
             keyboardType="decimal-pad"
             style={styles.input}
+            placeholder="20"
+            placeholderTextColor="#444"
           />
         </View>
 
@@ -53,6 +59,8 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
               onChangeText={(val) => setRatio(sanitize(val))}
               keyboardType="decimal-pad"
               style={styles.inlineInput}
+              placeholder="16"
+              placeholderTextColor="#444"
             />
           </View>
         </View>
@@ -62,7 +70,7 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#000' },
   scrollContent: { paddingHorizontal: 36, paddingTop: 60, paddingBottom: 140 },
   resultContainer: { marginBottom: 40, alignItems: 'flex-start' },
   resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.accent, letterSpacing: -3 },

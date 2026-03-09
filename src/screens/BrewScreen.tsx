@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
 import { calculateCoffee } from '../lib/brewEngine';
+import { CoffeeContext } from '../context/CoffeeContext';
 
 const COLORS = { 
   textPrimary: '#FAFAFA', 
@@ -9,7 +10,10 @@ const COLORS = {
   surface: '#1A1A1A' 
 };
 
-export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitize }: any) {
+export default function BrewScreen() {
+  // Pulling the data from the central Brain (Context) instead of props
+  const { liters, setLiters, ratio, setRatio, sanitize } = useContext(CoffeeContext);
+
   const coffeeGrams = useMemo(() => {
     if (!liters || !ratio) return '—';
     const result = calculateCoffee(parseFloat(liters), parseFloat(ratio));
@@ -40,6 +44,8 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
             onChangeText={(val) => setLiters(sanitize(val))} 
             keyboardType="decimal-pad" 
             style={styles.input} 
+            placeholder="0.5"
+            placeholderTextColor="#444"
           />
         </View>
 
@@ -53,6 +59,8 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
               onChangeText={(val) => setRatio(sanitize(val))} 
               keyboardType="decimal-pad" 
               style={styles.inlineInput} 
+              placeholder="16"
+              placeholderTextColor="#444"
             />
           </View> 
         </View>
@@ -62,7 +70,7 @@ export default function BrewScreen({ liters, setLiters, ratio, setRatio, sanitiz
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#000' },
   scrollContent: { paddingHorizontal: 36, paddingTop: 60, paddingBottom: 140 },
   resultContainer: { marginBottom: 40, alignItems: 'flex-start' },
   resultValue: { fontSize: 96, fontWeight: '900', color: COLORS.accent, letterSpacing: -3 },
