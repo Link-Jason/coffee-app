@@ -1,62 +1,43 @@
-# Coffee Brew Ratio Calculator
+# ☕ Coffee Brew Ratio Calculator
+> A precision-engineered digital instrument for consistent brewing.
 
-A precision coffee-to-water ratio calculator built for consistent brewing.
+The Coffee Brew Ratio Calculator is a focused tool designed to remove guesswork from your morning routine. It provides real-time calculations to achieve repeatable extraction results across all manual brewing methods.
 
-This app helps calculate exact coffee and water measurements to achieve repeatable extraction results across manual brewing methods.
-
-🌐 **Live App:** https://coffee-app-snowy-chi.vercel.app/
-
----
-
-## Overview
-
-The Coffee Brew Ratio Calculator is a focused digital tool designed to remove guesswork from brewing.  
-It emphasizes clarity, speed, and usability over feature complexity.
-
-Whether you're dialing in a pour-over or experimenting with immersion methods, this app provides quick, accurate ratio calculations in a distraction-free interface.
+🌐 **[Live App](https://coffee-app-snowy-chi.vercel.app/)**
 
 ---
 
-## Features
+## 🚀 Features
+- **Instant Calculations:** Seamlessly convert between coffee weight and water weight.
+- **Precision Focus:** Stripped-back interface to ensure you focus only on the metrics that matter.
+- **Dark-Mode-First:** High-contrast "Midnight Rust" theme for easy reading in any lighting.
+- **Minimal Cognitive Load:** Built for speed and usability.
 
-- Calculate coffee-to-water ratios instantly
-- Convert between coffee weight and water weight
-- Clean, minimal UI built for fast input
-- Dark-mode-first, high-contrast design
-
----
-
-## Design Approach
-
-This project was intentionally designed as a **single-purpose instrument** rather than a multi-feature app.
-
-- **Precision First** — Core metrics only
-- **High Contrast Interface** — Deep charcoal (`#0F0F0F`) with rust (`#A65B3C`) accents
-- **Editorial Layout** — Structured, left-aligned typography for a professional feel
-- **Minimal Surface Area** — Reduced cognitive load for faster use
+## 🎨 Design Approach
+This project was designed as a **single-purpose instrument**:
+* **High Contrast:** Uses deep charcoal (`#0F0F0F`) with artisan rust (`#A65B3C`) accents.
+* **Editorial Layout:** Professional, left-aligned typography for a "digital tool" feel.
 
 ---
 
-## Tech Stack
-
-- **React Native + Expo**
-- **TypeScript**
-- **Deployed on Vercel**
+## 💻 Tech Stack
+* **Framework:** React Native + Expo
+* **Language:** TypeScript
+* **Deployment:** Vercel
 
 ---
 
-## Local Development
+## 🛠️ Local Development
 
 ```bash
-# Clone the repository
-git clone https://github.com/Link-Jason/coffee-app.git
+# 1. Clone the repository
+git clone [https://github.com/Link-Jason/coffee-app.git](https://github.com/Link-Jason/coffee-app.git)
 
-# Navigate into the project
+# 2. Navigate into the project
 cd coffee-app
 
-# Install dependencies
+# 3. Install dependencies
 npm install
 
-# Start development server
-npm start
+# 4. Start development server
 npx expo start
