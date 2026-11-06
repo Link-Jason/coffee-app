@@ -27,14 +27,14 @@ export default function YieldScreen({ grams, setGrams, ratio, setRatio, sanitize
         <Text style={styles.resultValue}>
           {waterYield}{waterYield !== '—' && <Text style={styles.unit}>L</Text>}
         </Text>
-        <Text style={styles.resultLabel}>Total Water Needed</Text>
+        <Text style={styles.resultLabel}>Water Required</Text>
       </View>
 
       {/* Input Form Section */}
       <View style={styles.form}>
         {/* Beans Input */}
         <View style={styles.inputWrapper}>
-          <Text style={styles.label}>Beans Remaining (Grams)</Text>
+        <Text style={styles.label}>Coffee (Grams)</Text>
           <TextInput
             value={grams}
             onChangeText={(val) => setGrams(sanitize(val))}
